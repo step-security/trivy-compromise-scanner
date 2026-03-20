@@ -9,7 +9,6 @@ import (
 // compromised commit SHAs known to be associated with that action.
 // These are the actions and SHAs confirmed to be part of the aquasecurity/trivy
 // supply chain compromise on 2026-03-19 to 2026-03-20.
-// PLACEHOLDER: Fill in actual compromised action names and their commit SHAs.
 var CompromisedActions = map[string][]string{
 	"aquasecurity/trivy-action": {
 		"f77738448eec70113cf711656914b61905b3bd47",
@@ -32,7 +31,6 @@ var CompromisedActions = map[string][]string{
 		"555e7ad4c895c558c7214496df1cd56d1390c516",
 		"794b6d99daefd5e27ecb33e12691c4026739bf98",
 		"506d7ff06abc509692c600b5b69b4dc6ceaa4b15",
-		// second SHA per version from version-compromised-sha.txt
 		"91d5e0a13afab54533a95f8019dd7530bd38a071", // 0.0.8
 		"252554b0e1130467f4301ba65c55a9c373508e35", // 0.0.9
 		"9e8968cb83234f0de0217aa8c934a68a317ee518", // 0.1.0
