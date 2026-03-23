@@ -5,7 +5,7 @@ go 1.25
 require (
 	github.com/google/go-github/v69 v69.0.0
 	github.com/spf13/cobra v1.8.1
-	golang.org/x/oauth2 v0.21.0
+	golang.org/x/oauth2 v0.27.0
 )
 
 require (
