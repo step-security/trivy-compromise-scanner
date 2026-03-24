@@ -28,18 +28,26 @@ go build -o trivy-compromise-scanner .
 
 Requires Go 1.25+.
 
+### Using Docker
+
+You can build and run `trivy-compromise-scanner` in a container without installing Go locally.
+
+```bash
+docker build -t trivy-compromise-scanner .
+```
+
 ---
 
 ## Usage
 
-```
+```bash
 trivy-compromise-scanner [flags]
 ```
 
 ### Flags
 
 | Flag | Short | Env | Default | Description |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `--token` | `-t` | `GITHUB_TOKEN` | — | GitHub PAT (**required**) |
 | `--org` | | — | — | Org name(s); repeatable or comma-separated |
 | `--repo` | `-r` | — | — | `owner/repo`; repeatable or comma-separated |
@@ -58,33 +66,46 @@ At least one of `--org` or `--repo` is required.
 - `repo` (or `public_repo` for public repos only) — to list workflow runs and download logs
 - `read:org` — required when scanning organizations with `--org`
 
+### Running Using Docker
+
+When using docker the arguments can be passed in after the container name.  Environment variables be loaded via `-e`.  And if you want JSON or CSV output files then mount the target using `-v`.
+
+```bash
+docker run --rm \
+  -e GITHUB_TOKEN=ghp_yourtokenhere \
+  -v "$PWD:/workspace" \
+  trivy-compromise-scanner \
+  --repo owner/repo \
+  --output /workspace/results.json
+```
+
 ---
 
 ## Examples
 
 ```bash
 # Validate PAT permissions without scanning
-trivy-compromise-scanner--token $GITHUB_TOKEN --repo owner/repo --dry-run
+trivy-compromise-scanner --token $GITHUB_TOKEN --repo owner/repo --dry-run
 
 # Scan a single repo, output JSON to stdout
-trivy-compromise-scanner--token $GITHUB_TOKEN --repo owner/repo
+trivy-compromise-scanner --token $GITHUB_TOKEN --repo owner/repo
 
 # Scan a single repo, save JSON to file
-trivy-compromise-scanner--token $GITHUB_TOKEN --repo owner/repo --output results.json
+trivy-compromise-scanner --token $GITHUB_TOKEN --repo owner/repo --output results.json
 
 # Scan multiple repos
-trivy-compromise-scanner--token $GITHUB_TOKEN \
+trivy-compromise-scanner --token $GITHUB_TOKEN \
   --repo owner/repo1 \
   --repo owner/repo2
 
 # Scan an entire organization, output CSV
-trivy-compromise-scanner--token $GITHUB_TOKEN \
+trivy-compromise-scanner --token $GITHUB_TOKEN \
   --org myorg \
   --format csv \
   --output results.csv
 
 # Scan with verbose logging and custom time window
-trivy-compromise-scanner--token $GITHUB_TOKEN \
+trivy-compromise-scanner --token $GITHUB_TOKEN \
   --repo owner/repo \
   --since 2026-03-19T00:00:00Z \
   --until 2026-03-20T23:59:59Z \
@@ -97,7 +118,7 @@ trivy-compromise-scanner--token $GITHUB_TOKEN \
 
 ### Summary Table (always printed to stdout)
 
-```
+```plain
 SUMMARY
 Scanned at:    2026-03-20T12:00:00Z
 Repos scanned: 3
@@ -175,6 +196,7 @@ Add the confirmed compromised action names and their SHA(s) here. Multiple SHAs 
 ## Rate Limiting
 
 The scanner respects GitHub API rate limits:
+
 - Retries once after sleeping until reset on `RateLimitError` or `AbuseRateLimitError`
 - Proactively throttles when fewer than 100 API requests remain
 
@@ -185,7 +207,7 @@ Use `--workers` to tune concurrency (default: 5). Lower this value if you encoun
 ## Exit Codes
 
 | Code | Meaning |
-|---|---|
+| --- | --- |
 | `0` | Success (even if findings were found) |
 | `1` | Fatal error (invalid flags, permission failure, API error) |
 
